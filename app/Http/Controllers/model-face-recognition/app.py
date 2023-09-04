@@ -1,11 +1,18 @@
 # ====================================
-
-from flask import Flask, render_template, Response
+import time
+import_start = time.time()
 import cv2
 import numpy as np
+# from facenet import Facenet 
 from keras_facenet import FaceNet
+# Import necessary modules from the facenet library
+# from facenet import    get_face_embeddings
+
 import joblib
-import sys 
+import sys
+
+import_end = time.time()
+
 
 
 # app = Flask(__name__)
@@ -13,14 +20,21 @@ import sys
 # Load pre-trained FaceNet model
 
 
-
+sys_start = time.time()
 image_path = sys.argv[1]
+sys_end = time.time()
+
+# print('sys time:', sys_start - sys_end)
 
 # print(image_path)
 
-
+loadfacenet_start = time.time()
 facenet_model = FaceNet()
+loadfacenet_end = time.time()
 
+# print('loadfacenet time:', loadfacenet_start - loadfacenet_end)
+
+loadpkl_start = time.time()
 # Nama file model yang telah disimpan sebelumnya
 knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_knn_model.pkl'
 svm_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_svm_model.pkl'
@@ -31,8 +45,13 @@ best_model_svm = joblib.load(svm_model)
 
 # load cascade classifier for face detection
 face_cascade = cv2.CascadeClassifier('C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
+loadpkl_end = time.time()
 
-threshold_knn = 1
+# print('loadpkl time:', loadpkl_start - loadpkl_end)
+
+creaefungsi_start = time.time()
+
+threshold_knn = 0.75
 threshold_svm = 0.088
 
 # Define a function to extract embeddings from an image
@@ -105,12 +124,19 @@ def get_label(frame):
 
     return label_knn, score_knn, label_svm, score_svm
 
+creaefungsi_end = time.time()
+
+# print('creaefungsi time:', creaefungsi_start - creaefungsi_end)
+
+start = time.time()
 label_knn, score_knn, label_svm, score_svm = get_label(image_path)
+end = time.time()
 
 
-
-print(label_knn)# ===========================================================
-print(score_knn)# ===========================================================
+print(label_knn)
+# print(score_knn)
+# print(start-end)
+# print('import time:', import_start - import_end)
 
 
 # Initialize the camera

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MLApiController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // ML API 
 Route::post('/predict',  [MLApiController::class,'predict']);
+Route::post('/upload-image',  [ImageController::class,'uploadImage']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

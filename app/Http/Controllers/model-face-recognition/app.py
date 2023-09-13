@@ -36,7 +36,7 @@ loadfacenet_end = time.time()
 
 loadpkl_start = time.time()
 # Nama file model yang telah disimpan sebelumnya
-knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_knn_model.pkl'
+knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/regist_model.pkl'
 svm_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_svm_model.pkl'
 
 # Memuat model dari file
@@ -51,7 +51,7 @@ loadpkl_end = time.time()
 
 creaefungsi_start = time.time()
 
-threshold_knn = 0.75
+threshold_knn = 0.72
 threshold_svm = 0.088
 
 # Define a function to extract embeddings from an image
@@ -134,7 +134,7 @@ end = time.time()
 
 
 print(label_knn)
-# print(score_knn)
+print(score_knn)
 # print(start-end)
 # print('import time:', import_start - import_end)
 

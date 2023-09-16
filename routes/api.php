@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/predict',  [MLApiController::class,'predict']);
 Route::post('/testing',  [MLApiController::class,'testing']);
 Route::post('/images',  [MLApiController::class,'images']);
+Route::post('/img',  [MLApiController::class,'img']);
+
+Route::get('/create-zip', [MLApiController::class,'createZip']);
 Route::post('/upload-image',  [ImageController::class,'uploadImage']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

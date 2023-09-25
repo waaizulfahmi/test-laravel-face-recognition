@@ -1,50 +1,31 @@
-# import sys
-
-# image_path = sys.argv[1]
-
-# # print(type(image_path))
-
-# print(image_path)
-
-import sys
-from zipfile import ZipFile
-from io import BytesIO
-from PIL import Image
-import matplotlib.pyplot as plt
+# from zipfile import ZipFile
+# from io import BytesIO
+# from PIL import Image
+# import matplotlib.pyplot as plt
 import sys 
 import cv2
 import numpy as np
 from keras_facenet import FaceNet
 import joblib
 import os
+import glob
 
-if len(sys.argv) != 2:
-    print("Usage: python script.py <zip_file_path>")
-    sys.exit(1)
+file_name = sys.argv[1]
 
-zip_file_path = sys.argv[1]
+# dataset
+root_dir = file_name
 
-data_master = {}
-labels, data = [], []
-
-with ZipFile(zip_file_path, 'r') as zip:
-    name_file_list =  zip.namelist()
-
-    for name_in_list in name_file_list:
-        ekstensi = name_in_list.split('.')[-1].lower()
-
-        if ekstensi in ('jpg', 'jpeg', 'png'):
-            with zip.open(name_in_list) as file_in_zip:
-                img_data = file_in_zip.read()
-
-            img_pil = Image.open(BytesIO(img_data))
-            print(img_pil)
-
-            labels.append('wanda')
-
-            data.append(img_pil)
-
-data_master = {'labels': labels, 'data': data}
+# get list of image file paths and labels
+image_paths = []
+labels = []
+for subdir, dirs, files in os.walk(root_dir):
+    label = os.path.basename(subdir)
+    label = label.split('-')
+    label = label[0]
+    for file in files:
+        if file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png'):
+            image_paths.append(os.path.join(subdir, file))
+            labels.append(label)
 
 # print(data_master)
 
@@ -55,10 +36,9 @@ model = FaceNet()
 # Define a function to extract embeddings from an image
 def get_embedding(img_path):
     # Read image
-    # Konversi gambar PIL ke format yang dapat digunakan oleh OpenCV (numpy array)
-    image_cv = cv2.cvtColor(np.array(img_path), cv2.COLOR_RGB2BGR)
+    img = cv2.imread(img_path)
     # Detect faces
-    wajah = face_cascade.detectMultiScale(image_cv, 1.1, 4)
+    wajah = face_cascade.detectMultiScale(img, 1.1, 4)
 
     # If no face is detected, skip to next image
     if len(wajah) == 0:
@@ -68,7 +48,7 @@ def get_embedding(img_path):
     x1, y1, width, height = wajah[0]
     x1, y1 = abs(x1), abs(y1)
     x2, y2 = x1 + width, y1 + height
-    img = image_cv[y1:y2, x1:x2]
+    img = img[y1:y2, x1:x2]
     
     # Resize image to (160, 160)
     img = cv2.resize(img, (224, 224))
@@ -85,7 +65,7 @@ def get_embedding(img_path):
 # Iterate through all images in image_paths
 new_embeddings = []
 new_labels = []
-for i, img_data in enumerate(data_master['data']):
+for i, img_data in enumerate(image_paths):
     # Extract embedding from image and append to list
     new_test_embedding = get_embedding(img_data)
     
@@ -94,7 +74,7 @@ for i, img_data in enumerate(data_master['data']):
         continue
     
     new_embeddings.append(new_test_embedding)
-    new_labels.append(data_master['labels'][i])
+    new_labels.append(labels[i])
 
 X_train = new_embeddings
 y_train = new_labels
@@ -111,11 +91,13 @@ if os.path.exists(data):
 
     try:
         joblib.dump(data_master, data)
+        print('Data diperbarui')
     except Exception as e:
         print("Error:", str(e))
 else:
     data_master = {'labels': new_labels, 'embeddings': new_embeddings}
     try:
         joblib.dump(data_master, data)
+        print('Data disimpan')
     except Exception as e:
         print("Error:", str(e))

@@ -15,7 +15,7 @@ import_end = time.time()
 
 
 
-# app = Flask(__name__)
+# app = Flask(name)
 
 # Load pre-trained FaceNet model
 
@@ -37,11 +37,12 @@ loadfacenet_end = time.time()
 loadpkl_start = time.time()
 # Nama file model yang telah disimpan sebelumnya
 knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/regist_model.pkl'
-svm_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_svm_model.pkl'
 
 # Memuat model dari file
 best_model_knn = joblib.load(knn_model)
-best_model_svm = joblib.load(svm_model)
+
+data = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/data_baru.pkl'
+data_master = joblib.load(data)
 
 # load cascade classifier for face detection
 face_cascade = cv2.CascadeClassifier('C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
@@ -51,8 +52,8 @@ loadpkl_end = time.time()
 
 creaefungsi_start = time.time()
 
-threshold_knn = 0.72
-threshold_svm = 0.088
+THRESHOLD_KNN = 0.72
+THRESHOLD_VECT = 0.72
 
 # Define a function to extract embeddings from an image
 def get_embedding(img):
@@ -90,8 +91,9 @@ def get_label(frame):
     # Check if embedding is None
     if vector is None:
         label_knn = "Tidak Terdeteksi"
-        label_svm = "Tidak Terdeteksi"
-        score_knn, score_svm = 0,0
+        score_knn = 0
+        label_vect = "Tidak Terdeteksi"
+        score_vect = 0
     else:
         vector = vector.reshape(1, -1)
 
@@ -103,83 +105,36 @@ def get_label(frame):
         # Apply threshold_knn to predictions and assign new labels
         for i, pred_label in enumerate(y_pred_knn):
             score_knn = distances[i][0]
-            if distances[i][0] > threshold_knn:
+            if distances[i][0] > THRESHOLD_KNN:
                 label_knn = "Tidak Terdaftar"  # Assign a new label if above threshold
             else:
                 label_knn = pred_label
 
-        # Prediksi menggunakan model SVM yang sudah dilatih
-        y_pred_svm = best_model_svm.predict(vector)
-        # Prediksi skor jarak dari hyperplane
-        svm_decision_scores = best_model_svm.decision_function(vector)
+        similarity = np.dot(data_master['embeddings'], vector) / (np.linalg.norm(data_master['embeddings'], axis=1) * np.linalg.norm(vector))
+        nearest_index = np.argmax(similarity)
+        label_vect = data_master['labels'][nearest_index]
+        score_vect = similarity[nearest_index]
+        if score_vect < THRESHOLD_VECT:
+          label_vect = "Tidak Terdaftar"
 
-        for index in range(len(y_pred_svm)):
-            score_svm = np.mean(svm_decision_scores[index])
-            # Apply threshold to predictions and assign new labels
-            if score_svm > threshold_svm:
-                # Assign a new label if above threshold
-                label_svm = "Tidak Terdaftar"
-            else:
-                label_svm = y_pred_svm
-
-    return label_knn, score_knn, label_svm, score_svm
+    return label_knn, score_knn, label_vect, score_vect
 
 creaefungsi_end = time.time()
 
 # print('creaefungsi time:', creaefungsi_start - creaefungsi_end)
 
 start = time.time()
-label_knn, score_knn, label_svm, score_svm = get_label(image_path)
+label_knn, score_knn, label_vect, score_vect = get_label(image_path)
 end = time.time()
 
 
 print(label_knn)
-# print(score_knn)
+print(score_knn)
+print(label_vect)
+print(score_vect)
 # print(start-end)
 # print('import time:', import_start - import_end)
 
 
 # Initialize the camera
 #camera = cv2.VideoCapture(0)
-
-# def generate_frames():
-#     while True:
-#         success, frame = camera.read()
-#         if not success:
-#             break
-#         frame = cv2.flip(frame, 1) # melakukan flip secara horizontal
-#         frame = cv2.resize(frame, (480, 320))
-        
-#         label_knn, score_knn, label_svm, score_svm = get_label(frame)
-#         print('KNN: ',label_knn)
-#         print('score KNN: ', score_knn)
-#         print('SVM: ',label_svm)
-#         print('score SVM: ', score_svm)
-#         print('====')
-
-#         # Draw label on the frame
-#         font = cv2.FONT_HERSHEY_SIMPLEX
-#         bottom_left_corner = (10, frame.shape[0] - 30)  # Coordinates for bottom-left corner
-#         font_scale = 0.5
-#         font_color = (255, 255, 255)  # White color
-#         line_type = 1
-
-#         cv2.putText(frame, label_knn, bottom_left_corner, font, font_scale, font_color, line_type)
-#         #cv2.putText(frame, label_svm[0], (10, frame.shape[0] - 10), font, font_scale, font_color, line_type)
-
-#         # Convert frame to JPEG format
-#         ret, buffer = cv2.imencode('.png', frame)
-#         frame = buffer.tobytes()
-#         yield (b'--frame\r\n'
-#                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-# # @app.route('/')
-# # def index():
-# #     return render_template('index.html')
-
-# @app.route('/video_feed')
-# def video_feed():
-#     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-# if __name__ == '__main__':
-#     app.run(debug=True, port=5000)

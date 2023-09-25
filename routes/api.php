@@ -17,10 +17,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ML API 
-Route::post('/predict',  [MLApiController::class,'predict']);
+Route::post('/login',  [MLApiController::class,'login']);
+Route::post('/register',  [MLApiController::class,'register']);
 Route::post('/testing',  [MLApiController::class,'testing']);
 Route::post('/images',  [MLApiController::class,'images']);
-Route::post('/img',  [MLApiController::class,'img']);
+Route::post('/test',  [MLApiController::class,'test']);
 
 Route::get('/create-zip', [MLApiController::class,'createZip']);
 Route::post('/upload-image',  [ImageController::class,'uploadImage']);

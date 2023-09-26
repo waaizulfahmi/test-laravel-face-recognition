@@ -58,26 +58,21 @@ class MLApiController extends Controller
         $string = str_replace("\n", "", $output);
         $cleanedText = Str::after($string, 'step');
         unlink($tmpFilePath);
-        // $predictedData = json_decode($output);
-
-        // $predictedName = trim($output);
+        
 
         if ($cleanedText) {
-            // Ada hasil yang valid dari model Python
-            // Cari pengguna dengan nama yang sesuai di database
+            
             $user = User::where('name', $cleanedText)->first();
 
             if ($user) {
-                // Login pengguna menggunakan autentikasi Laravel
+                
                 Auth::login($user);
                 
                 return response()->json(['message' => 'Login successful']);
             }
         }
 
-        // Jika tidak ada hasil yang valid dari model Python atau tidak ada pengguna yang sesuai
-        // return response()->json(['message' => 'Authentication failed']);
-        // Return a response or store the file path in the database
+      
         return response()->json(['message' => 'Image saved successfully', 'file_name' => $fileName, 'predictions' => $cleanedText]);
 
     }
@@ -87,12 +82,12 @@ class MLApiController extends Controller
         // Mengambil data JSON dari permintaan
         $data = $request->json()->all();
 
-        // Pastikan data yang diterima adalah array gambar
         if (!isset($data['images']) || !is_array($data['images'])) {
             return response()->json(['error' => 'Invalid data format'], 400);
         }
-        // $dataName = json_decode($data, true);
         $name = $data['name'];
+
+        
         // $name = $dataName['value'];
 
         $images = $data['images'];

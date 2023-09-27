@@ -36,16 +36,16 @@ loadfacenet_end = time.time()
 
 loadpkl_start = time.time()
 # Nama file model yang telah disimpan sebelumnya
-knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/regist_model.pkl'
+# knn_model = '/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/regist_model.pkl'
 
-# Memuat model dari file
-best_model_knn = joblib.load(knn_model)
+# # Memuat model dari file
+# best_model_knn = joblib.load(knn_model)
 
-data = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/data_baru.pkl'
+data = '/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/data_baru.pkl'
 data_master = joblib.load(data)
 
 # load cascade classifier for face detection
-face_cascade = cv2.CascadeClassifier('C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
 loadpkl_end = time.time()
 
 # print('loadpkl time:', loadpkl_start - loadpkl_end)
@@ -90,25 +90,25 @@ def get_label(frame):
 
     # Check if embedding is None
     if vector is None:
-        label_knn = "Tidak Terdeteksi"
-        score_knn = 0
+        # label_knn = "Tidak Terdeteksi"
+        # score_knn = 0
         label_vect = "Tidak Terdeteksi"
         score_vect = 0
     else:
-        vector = vector.reshape(1, -1)
+        # vector_knn = vector.reshape(1, -1)
 
-        y_pred_knn = best_model_knn.predict(vector)
+        # y_pred_knn = best_model_knn.predict(vector_knn)
 
-        # Calculate distances to nearest neighbors used for prediction
-        distances, _ = best_model_knn.kneighbors(vector)
+        # # Calculate distances to nearest neighbors used for prediction
+        # distances, _ = best_model_knn.kneighbors(vector_knn)
 
-        # Apply threshold_knn to predictions and assign new labels
-        for i, pred_label in enumerate(y_pred_knn):
-            score_knn = distances[i][0]
-            if distances[i][0] > THRESHOLD_KNN:
-                label_knn = "Tidak Terdaftar"  # Assign a new label if above threshold
-            else:
-                label_knn = pred_label
+        # # Apply threshold_knn to predictions and assign new labels
+        # for i, pred_label in enumerate(y_pred_knn):
+        #     score_knn = distances[i][0]
+        #     if distances[i][0] > THRESHOLD_KNN:
+        #         label_knn = "Tidak Terdaftar"  # Assign a new label if above threshold
+        #     else:
+        #         label_knn = pred_label
 
         similarity = np.dot(data_master['embeddings'], vector) / (np.linalg.norm(data_master['embeddings'], axis=1) * np.linalg.norm(vector))
         nearest_index = np.argmax(similarity)
@@ -117,19 +117,19 @@ def get_label(frame):
         if score_vect < THRESHOLD_VECT:
           label_vect = "Tidak Terdaftar"
 
-    return label_knn, score_knn, label_vect, score_vect
+    return label_vect, score_vect
 
 creaefungsi_end = time.time()
 
 # print('creaefungsi time:', creaefungsi_start - creaefungsi_end)
 
 start = time.time()
-label_knn, score_knn, label_vect, score_vect = get_label(image_path)
+label_vect, score_vect = get_label(image_path)
 end = time.time()
 
 
-print(label_knn)
-print(score_knn)
+# print(label_knn)
+# print(score_knn)
 print(label_vect)
 print(score_vect)
 # print(start-end)

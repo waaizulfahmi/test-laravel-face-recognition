@@ -158,7 +158,7 @@ import joblib
 
 # Menyimpan model terbaik ke dalam file
 best_model = grid_search.best_estimator_
-model_filename = 'regist_model.pkl'
+model_filename = 'knn_regist_model.pkl'
 joblib.dump(best_model, model_filename)
 
 print("Best model saved as", model_filename)

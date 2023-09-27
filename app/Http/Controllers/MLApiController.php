@@ -53,7 +53,7 @@ class MLApiController extends Controller
         // setting time execution
         ini_set('max_execution_time', 300);
         
-        $command = escapeshellcmd("python C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/app.py $tmpFilePath" );
+        $command = escapeshellcmd("python3 /home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/app.py $tmpFilePath" );
         $output = shell_exec($command);
         $string = str_replace("\n", "", $output);
         $cleanedText = Str::after($string, 'step');
@@ -87,6 +87,9 @@ class MLApiController extends Controller
         }
         $name = $data['name'];
 
+        // $userData = new User();
+        // $userData->faceId = $name;
+        // $userData->save();
         
         // $name = $dataName['value'];
 
@@ -131,10 +134,11 @@ class MLApiController extends Controller
         $zipFilePath = public_path("storage/".$uniqueDirectoryName);
         ini_set('max_execution_time', 300);
         
-        $command = escapeshellcmd("python C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/app2.py $zipFilePath" );
+        $command = escapeshellcmd("python3 /home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/regis.py $zipFilePath" );
         $output = shell_exec($command);
         
-        return response()->json(['message' => 'Images received and processed successfully', 'image' => $directoryPath, 'python' => $output]);
+        return response()->json(['message' => 'Images received and processed successfully', 'image' => $directoryPath, 'python' => $output ]);
+        // 
     }
 
     

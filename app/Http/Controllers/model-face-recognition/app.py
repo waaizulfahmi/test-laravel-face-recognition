@@ -10,6 +10,11 @@ from keras_facenet import FaceNet
 
 import joblib
 import sys
+# import warnings
+# from sklearn.exceptions import InconsistentVersionWarning
+
+# # Filter out the InconsistentVersionWarning
+# warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 import_end = time.time()
 
@@ -36,15 +41,15 @@ loadfacenet_end = time.time()
 
 loadpkl_start = time.time()
 # Nama file model yang telah disimpan sebelumnya
-knn_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/regist_model.pkl'
-svm_model = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/best_svm_model.pkl'
+knn_model = '/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/regist_model.pkl'
+# svm_model = '/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/best_svm_model.pkl'
 
 # Memuat model dari file
 best_model_knn = joblib.load(knn_model)
-best_model_svm = joblib.load(svm_model)
+# best_model_svm = joblib.load(svm_model)
 
 # load cascade classifier for face detection
-face_cascade = cv2.CascadeClassifier('C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('/home/mango/Documents/Projects/test-laravel-face-recognition/app/Http/Controllers/model-face-recognition/haarcascade_frontalface_default.xml')
 loadpkl_end = time.time()
 
 # print('loadpkl time:', loadpkl_start - loadpkl_end)
@@ -52,7 +57,7 @@ loadpkl_end = time.time()
 creaefungsi_start = time.time()
 
 threshold_knn = 0.72
-threshold_svm = 0.088
+# threshold_svm = 0.088
 
 # Define a function to extract embeddings from an image
 def get_embedding(img):
@@ -90,8 +95,8 @@ def get_label(frame):
     # Check if embedding is None
     if vector is None:
         label_knn = "Tidak Terdeteksi"
-        label_svm = "Tidak Terdeteksi"
-        score_knn, score_svm = 0,0
+        # label_svm = "Tidak Terdeteksi"
+        score_knn = 0,0
     else:
         vector = vector.reshape(1, -1)
 
@@ -108,28 +113,28 @@ def get_label(frame):
             else:
                 label_knn = pred_label
 
-        # Prediksi menggunakan model SVM yang sudah dilatih
-        y_pred_svm = best_model_svm.predict(vector)
-        # Prediksi skor jarak dari hyperplane
-        svm_decision_scores = best_model_svm.decision_function(vector)
+        # # Prediksi menggunakan model SVM yang sudah dilatih
+        # y_pred_svm = best_model_svm.predict(vector)
+        # # Prediksi skor jarak dari hyperplane
+        # svm_decision_scores = best_model_svm.decision_function(vector)
 
-        for index in range(len(y_pred_svm)):
-            score_svm = np.mean(svm_decision_scores[index])
-            # Apply threshold to predictions and assign new labels
-            if score_svm > threshold_svm:
-                # Assign a new label if above threshold
-                label_svm = "Tidak Terdaftar"
-            else:
-                label_svm = y_pred_svm
+        # for index in range(len(y_pred_svm)):
+        #     score_svm = np.mean(svm_decision_scores[index])
+        #     # Apply threshold to predictions and assign new labels
+        #     if score_svm > threshold_svm:
+        #         # Assign a new label if above threshold
+        #         label_svm = "Tidak Terdaftar"
+        #     else:
+        #         label_svm = y_pred_svm
 
-    return label_knn, score_knn, label_svm, score_svm
+    return label_knn, score_knn
 
 creaefungsi_end = time.time()
 
 # print('creaefungsi time:', creaefungsi_start - creaefungsi_end)
 
 start = time.time()
-label_knn, score_knn, label_svm, score_svm = get_label(image_path)
+label_knn, score_knn = get_label(image_path)
 end = time.time()
 
 

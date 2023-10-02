@@ -95,12 +95,12 @@ def get_label(frame):
         label_vect = "Tidak Terdeteksi"
         score_vect = 0
     else:
-        vector = vector.reshape(1, -1)
+        vector_knn = vector.reshape(1, -1)
 
-        y_pred_knn = best_model_knn.predict(vector)
+        y_pred_knn = best_model_knn.predict(vector_knn)
 
         # Calculate distances to nearest neighbors used for prediction
-        distances, _ = best_model_knn.kneighbors(vector)
+        distances, _ = best_model_knn.kneighbors(vector_knn)
 
         # Apply threshold_knn to predictions and assign new labels
         for i, pred_label in enumerate(y_pred_knn):

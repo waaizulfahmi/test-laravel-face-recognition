@@ -51,7 +51,7 @@ def get_embedding(img_path):
     img = img[y1:y2, x1:x2]
     
     # Resize image to (160, 160)
-    img = cv2.resize(img, (224, 224))
+    img = cv2.resize(img, (160, 160))
 
     # Convert image to tensor
     img = img.astype(np.float32)
@@ -101,3 +101,31 @@ else:
         print('Data disimpan')
     except Exception as e:
         print("Error:", str(e))
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+
+# Parameter grid untuk pencarian grid
+param_grid = {
+    'n_neighbors': [1, 3, 5, 7],
+    'weights': ['uniform', 'distance'],
+    'metric': ['euclidean', 'manhattan']
+}
+
+# Inisialisasi KNN dan GridSearchCV
+knn = KNeighborsClassifier()
+grid_search = GridSearchCV(knn, param_grid, cv=5)
+
+# Melakukan pencarian grid pada data Anda
+grid_search.fit(data_master['embeddings'], data_master['labels'])
+
+# Menampilkan parameter terbaik dan skor validasi terbaik
+print("Best Parameters:", grid_search.best_params_)
+print("Best CV Score:", grid_search.best_score_)
+
+# Menyimpan model terbaik ke dalam file
+best_model = grid_search.best_estimator_
+model_filename = 'C:/Users/HP/Documents/PROJECTS/test-with-face-detection/app/Http/Controllers/model-face-recognition/knn_model.pkl'
+joblib.dump(best_model, model_filename)
+
+print("Best model saved as", model_filename)

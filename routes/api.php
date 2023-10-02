@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // ML API 
 Route::post('/login',  [MLApiController::class,'login']);
 Route::post('/register',  [MLApiController::class,'register']);
-Route::post('/testing',  [MLApiController::class,'testing']);
+Route::post('/testing',  [MLApiController::class,'sendDataToWebSocket']);
 Route::post('/images',  [MLApiController::class,'images']);
 Route::post('/test',  [MLApiController::class,'test']);
 

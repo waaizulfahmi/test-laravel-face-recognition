@@ -20,8 +20,6 @@ image_paths = []
 labels = []
 for subdir, dirs, files in os.walk(root_dir):
     label = os.path.basename(subdir)
-    label = label.split('-')
-    label = label[0]
     for file in files:
         if file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png'):
             image_paths.append(os.path.join(subdir, file))

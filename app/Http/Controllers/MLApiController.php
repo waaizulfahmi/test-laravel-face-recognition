@@ -174,22 +174,22 @@ class MLApiController extends Controller
 
         event(new WebSocketEvent($message));
         // $output = $event->message;
-        $response = $request->input('result'); // Sesuaikan dengan nama field yang sesuai di request
+        // $response = $request->input('result'); // Sesuaikan dengan nama field yang sesuai di request
         // Lakukan apa yang perlu Anda lakukan dengan respons dari Python
         // Contoh: Simpan data ke database atau tangani sesuai kebutuhan Anda
 
         // return response()->json(['message' => $response]);
 
-        return response()->json(['message' => 'Data sent to WebSocket', 'hallo' => $response]);
+        // return response()->json(['message' => 'Data sent to WebSocket', 'hallo' => $response]);
     }
 
-    public function test(Request $request)
+    public function test($result)
 
     {
-        $response = $request->input('result');
+        dd($result);
 
 
-        return response()->json(['message' => $response]);
+        return response()->json(['message' => $result]);
 
     }
         // $imageData = $request->input('image_data');

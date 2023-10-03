@@ -42,4 +42,6 @@ class WebSocketEvent
         $this->message = $message;
         // $this->response = $response;
     }
+
+    
 }

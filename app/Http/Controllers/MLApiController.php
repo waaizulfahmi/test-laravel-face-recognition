@@ -84,12 +84,20 @@ class MLApiController extends Controller
         }
         $name = $data['name'];
 
+        $uniqueDirectoryName = $name ."-". time(); // Membuat nama direktori unik untuk setiap gambar
+        $user = New User([
+            "name" => $name, 
+            "email" => $name.'@gmail.com',
+            "password" => $name.random_int(1,10),
+            "faceId" => $uniqueDirectoryName
+
+        ]);
+
         
         // $name = $dataName['value'];
 
         $images = $data['images'];
 
-        $uniqueDirectoryName = $name ."-". time(); // Membuat nama direktori unik untuk setiap gambar
         $directoryPath = public_path() . '/' . $uniqueDirectoryName;
 
         Storage::disk('public')->makeDirectory($directoryPath);

@@ -19,11 +19,12 @@ class User extends Authenticatable
      */
     // use HasFactory;
     protected $guarded = [];
-    // protected $fillable = [
-    //     'name',
-    //     'email',
-    //     'password',
-    // ];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'faceId',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
